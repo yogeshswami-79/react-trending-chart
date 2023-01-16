@@ -1,5 +1,6 @@
 import { makeApiRequest, generateSymbol, parseFullSymbol } from '../helpers/helpers.js';
 import ConfigData from "./ConfigData.js";
+import axios from 'axios';
 import Streaming from "../streaming/streaming.js";
 
 export default class {
@@ -78,7 +79,10 @@ export default class {
     }
 
     async getBars(symbolInfo, resolution, periodParams, onHistoryCallback, onErrorCallback) {
+        console.log('getbars')
         const { from, to, firstDataRequest } = periodParams;
+        console.log(`from: ${new Date(from).toLocaleDateString('en-us').toString()} to: ${new Date(to).toLocaleDateString('en-us').toString()}`)
+        
         console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
         const parsedSymbol = parseFullSymbol(symbolInfo.full_name);
         const urlParameters = {
@@ -110,12 +114,23 @@ export default class {
                     }];
                 }
             });
+
             console.log(`[getBars]: returned ${bars.length} bar(s)`);
             onHistoryCallback(bars, { noData: false });
         } catch (error) {
             console.log('[getBars]: Get error', error);
             onErrorCallback(error);
         }
+
+        try{
+            const {data} = await axios.get('http://localhost:4040/historydata');
+            console.log(data)    
+            onHistoryCallback([], {noData:true})
+        }
+        catch(error){
+            onErrorCallback(error)
+        }
+
 
     }
 
