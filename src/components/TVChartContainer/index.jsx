@@ -12,6 +12,7 @@ function getLanguageFromURL() {
 export function TVChartContainer() {
 
 	const ref = createRef();
+
 	const [tvWidget, setTvWidget] = useState(null);
 	const [defaultProps, setDefaultProps] = useState({
 		symbol: 'AAPL',
@@ -37,19 +38,28 @@ export function TVChartContainer() {
 			fullscreen: true,
 			container: 'tv_chart_container',
 			datafeed: new Datafeed(),
-			library_path: '../charting_library_cloned_data/charting_library/',
+			library_path: 'charting_library/',
 		}
 
-		setTvWidget(() => new widget({
+		const wdgt = new widget({
 			symbol: 'Bitfinex:BTC/USD',
 			interval: '1D',
 			timezone: "America/New_York",
 			container: "tv_chart_container",
 			locale: "en",
+			
 			datafeed: new Datafeed(),
+			disabled_features:['timezone_menu' , 'go_to_date' ,'header_widget' ],
 			// datafeed: new Datafeeds.UDFCompatibleDatafeed("https://demo_feed.tradingview.com"),
 			library_path: "charting_library/"
-		}))
+		})
+
+		setTvWidget(() => wdgt);
+
+		// wdgt.onChartReady(()=>{
+		// 	wdgt.startFullscreen()
+		// })
+
 	}, [])
 
 
